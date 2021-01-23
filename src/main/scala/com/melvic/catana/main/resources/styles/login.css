@@ -1,0 +1,22 @@
+#login-pane {
+    -fx-padding: 20;
+}
+
+#controls {
+    -fx-padding: 0 0 30 0;
+}
+
+#fields {
+    -fx-spacing: 15;
+    -fx-padding: 0 0 15 0;
+}
+
+#create-account {
+    -fx-border-color: transparent;
+    -fx-padding: 0
+}
+
+#create-account-pane {
+    -fx-spacing: 15;
+    -fx-padding: 0 20 0 20;
+}
