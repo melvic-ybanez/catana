@@ -14,3 +14,12 @@
 .dialog-pane .text-field > Pane {
     -fx-background-color: transparent;
 }
+
+.email-field {
+    -fx-pref-width: 375;
+    -fx-max-width: 375;
+}
+
+.dialog-pane {
+    -fx-border-color: gray;
+}
