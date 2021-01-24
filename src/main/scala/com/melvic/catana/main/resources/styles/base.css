@@ -1,3 +1,7 @@
 .root{
     -fx-font-size: 16pt;
 }
+
+.text-field, .button {
+    -fx-padding: 10;
+}
