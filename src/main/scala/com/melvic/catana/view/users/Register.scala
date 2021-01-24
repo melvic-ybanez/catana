@@ -5,7 +5,7 @@ import com.melvic.catana.view.components._
 import jfxtras.styles.jmetro.FlatDialog
 import scalafx.Includes._
 import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.{ButtonType, Dialog}
+import scalafx.scene.control.{ButtonType, Dialog, TextField}
 import scalafx.scene.layout.VBox
 import scalafx.stage.Stage
 
@@ -27,7 +27,11 @@ object Register {
 
     val usernameField = promptField("Username")
     val passwordField = defaultPasswordField
-    val emailField = promptField("Email")
+    val emailField = new TextField {
+      promptText = "Email"
+      maxWidth = 375
+      prefWidth = 375
+    }
     val nameField = promptField("Name")
     val addressField = promptField("Address")
     val ageField = promptField("Age")
