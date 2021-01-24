@@ -22,7 +22,7 @@ object Main extends JFXApp {
     maximized = true
   }
 
-  val jMetro = new JMetro(Style.LIGHT)
+  val jMetro = new JMetro(Style.DARK)
   jMetro.setScene(mainScene)
   jMetro.setAutomaticallyColorPanes(true)
 }
