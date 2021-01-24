@@ -1,7 +1,12 @@
 .root{
     -fx-font-size: 16pt;
+    -fx-background-color: white;
 }
 
 .text-field, .button {
     -fx-padding: 10;
+}
+
+.base-pane {
+    -fx-background-color: white;
 }

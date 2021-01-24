@@ -1,5 +1,6 @@
 #login-pane {
-    -fx-padding: 20;
+    -fx-padding: 90 70 90 70;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 10, 0.5, 1, 1);
 }
 
 #controls {

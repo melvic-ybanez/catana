@@ -15,11 +15,14 @@ object Main extends JFXApp {
     }
     stylesheets += Resources.style("base")
   }
+
   stage = new PrimaryStage {
     title = "Catana"
     scene = mainScene
     maximized = true
   }
+
   val jMetro = new JMetro(Style.LIGHT)
   jMetro.setScene(mainScene)
+  jMetro.setAutomaticallyColorPanes(true)
 }

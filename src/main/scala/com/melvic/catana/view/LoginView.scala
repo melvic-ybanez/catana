@@ -11,6 +11,8 @@ object LoginView {
   def apply(): Pane = new BorderPane {
     center = new BorderPane {
       id = "controls"
+      styleClass += "base-pane"
+
       center = new VBox {
         children = List(
           new TextField {
@@ -21,14 +23,18 @@ object LoginView {
           }
         )
         id = "fields"
+        styleClass += "base-pane"
       }
       bottom = new Button {
         text = "Login"
         maxWidth = Double.MaxValue
+        defaultButton = true
       }
     }
     bottom = new HBox {
       id = "create-account-pane"
+      styleClass += "base-pane"
+
       children ++= List(
         new Label { text = "Not registered?" },
         new Hyperlink {
@@ -39,5 +45,6 @@ object LoginView {
     }
     id = "login-pane"
     stylesheets += Resources.style("login")
+    styleClass += "base-pane"
   }
 }
