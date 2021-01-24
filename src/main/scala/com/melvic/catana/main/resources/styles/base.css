@@ -1,7 +1,16 @@
-.root{
+.root {
     -fx-font-size: 16pt;
 }
 
 .text-field, .button {
     -fx-padding: 10;
+}
+
+.fields-pane {
+    -fx-spacing: 15;
+    -fx-padding: 0 0 15 0;
+}
+
+.dialog-pane .text-field > Pane {
+    -fx-background-color: transparent;
 }

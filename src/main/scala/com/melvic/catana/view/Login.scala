@@ -1,27 +1,24 @@
 package com.melvic.catana.view
 
-import scalafx.Includes._
 import com.melvic.catana.main.Resources
-import scalafx.geometry.{Insets, Pos}
-import scalafx.scene.control.{Button, Hyperlink, Label, PasswordField, TextField}
+import com.melvic.catana.view.components._
+import com.melvic.catana.view.users.Register
+import scalafx.Includes._
+import scalafx.scene.control.{Button, Hyperlink, Label}
 import scalafx.scene.layout.{BorderPane, HBox, Pane, VBox}
-import scalafx.scene.text.Font
+import scalafx.stage.Stage
 
-object LoginView {
-  def apply(): Pane = new BorderPane {
+object Login {
+  def apply(implicit stage: Stage): Pane = new BorderPane {
     center = new BorderPane {
       id = "controls"
 
       center = new VBox {
         children = List(
-          new TextField {
-            promptText = "Username"
-          },
-          new PasswordField {
-            promptText = "Password"
-          }
+          promptField("Username"),
+          defaultPasswordField
         )
-        id = "fields"
+        styleClass += "fields-pane"
       }
       bottom = new Button {
         text = "Login"
@@ -37,6 +34,7 @@ object LoginView {
         new Hyperlink {
           id = "create-account"
           text = "Create an account"
+          onAction = _ => Register.apply.showAndWait()
         }
       )
     }

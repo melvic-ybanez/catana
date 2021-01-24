@@ -7,11 +7,6 @@
     -fx-padding: 0 0 30 0;
 }
 
-#fields {
-    -fx-spacing: 15;
-    -fx-padding: 0 0 15 0;
-}
-
 #create-account {
     -fx-border-color: transparent;
     -fx-padding: 0

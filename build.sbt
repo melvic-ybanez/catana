@@ -6,7 +6,8 @@ scalaVersion := "2.13.4"
 
 libraryDependencies ++= Seq(
   "org.scalafx" %% "scalafx" % "12.0.2-R18",
-  "org.jfxtras" % "jmetro" % "11.6.12"
+  "org.jfxtras" % "jmetro" % "11.6.12",
+  "org.typelevel" %% "cats-core" % "2.1.1"
 )
 
 lazy val osName = System.getProperty("os.name") match {
