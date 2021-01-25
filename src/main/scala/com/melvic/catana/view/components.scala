@@ -1,6 +1,5 @@
 package com.melvic.catana.view
 
-import javax.swing.{JButton, JTextField}
 import scalafx.scene.control.{PasswordField, TextField}
 
 object components {

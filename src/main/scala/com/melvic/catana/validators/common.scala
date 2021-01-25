@@ -11,7 +11,7 @@ trait common {
   def numeric(input: String): ValidationResult[Long] =
     if (isNumeric(input)) input.toLong.validNec else NotANumber(input).invalidNec
 
-  def isNumeric(input: String) = input.forall(Character.isDigit)
+  def isNumeric(input: String) = input.nonEmpty && input.forall(Character.isDigit)
 }
 
 object common extends common

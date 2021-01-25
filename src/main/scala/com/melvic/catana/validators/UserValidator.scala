@@ -2,7 +2,6 @@ package com.melvic.catana.validators
 
 import java.time.Instant
 
-import cats.data.NonEmptyChain
 import com.melvic.catana.entities.User
 import common._
 import cats.implicits._
