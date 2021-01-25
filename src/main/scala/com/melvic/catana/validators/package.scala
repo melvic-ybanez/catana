@@ -2,6 +2,6 @@ package com.melvic.catana
 
 import cats.data.ValidatedNec
 
-package object validations {
+package object validators {
   type ValidationResult[A] = ValidatedNec[Error, A]
 }
