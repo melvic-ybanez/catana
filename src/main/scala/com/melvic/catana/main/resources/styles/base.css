@@ -23,3 +23,9 @@
 .dialog-pane {
     -fx-border-color: gray;
 }
+
+.dialog-pane .field-error-message {
+    -fx-text-fill: #ffaaaa;
+    -fx-font-size: 13pt;
+    -fx-padding: 0 0 0 10;
+}

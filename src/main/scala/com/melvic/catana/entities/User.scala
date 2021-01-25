@@ -12,3 +12,14 @@ final case class User(
     address: String,
     createdAt: Instant
 )
+
+object User {
+  case object Id extends Field
+  case object Username extends Field
+  case object Password extends Field
+  case object Email extends Field
+  case object Name extends Field
+  case object Age extends Field
+  case object Address extends Field
+  case object CreateAt extends Field
+}

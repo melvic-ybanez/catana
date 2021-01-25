@@ -5,15 +5,17 @@ import java.time.Instant
 import cats.data.Validated.{Invalid, Valid}
 import com.melvic.catana.entities.User
 import com.melvic.catana.validators.UserValidator
-import com.melvic.catana.view.components._
 import javafx.event.ActionEvent
 import javafx.scene.control.Button
 import scalafx.Includes._
-import scalafx.beans.property.{IntegerProperty, LongProperty, StringProperty}
+import scalafx.beans.property.{LongProperty, StringProperty}
 import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.{ButtonType, Dialog, PasswordField, TextField}
+import scalafx.scene.control.{ButtonType, Dialog, Label, PasswordField, TextField}
 import scalafx.scene.layout.VBox
 import scalafx.stage.{Stage, StageStyle}
+import cats.implicits._
+import com.melvic.catana.entities.User.{Address, Email, Name, Password, Username}
+import com.melvic.catana.validators.Error.{InvalidNumber, NotANumber, Required}
 
 class Register {
   import Register._
@@ -25,6 +27,13 @@ class Register {
   val address = StringProperty("")
   val age = StringProperty("")
   val createdAt = LongProperty(Instant.now.toEpochMilli)
+
+  val usernameError = StringProperty("")
+  val passwordError = StringProperty("")
+  val emailError = StringProperty("")
+  val nameError = StringProperty("")
+  val addressError = StringProperty("")
+  val ageError = StringProperty("")
 
   val registerButtonType = new ButtonType("Register", ButtonData.OKDone)
 
@@ -46,22 +55,36 @@ class Register {
     addResultConverter(dialog)
     addEventFilter(dialog)
 
+    def errorMsg(prop: StringProperty) = new Label {
+      styleClass += "field-error-message"
+      text <==> prop
+      visible <== prop.isNotEmpty
+      managed <== visible
+    }
+
+    clearErrors()
+
     dialog.dialogPane().content = new VBox {
       children = List(
         new TextField {
-          promptText = "Email"
-          styleClass += "email-field"
+          promptText = "Username"
           text <==> username
         },
+        errorMsg(usernameError),
         new PasswordField { promptText = "Password"; text <==> password },
+        errorMsg(passwordError),
         new TextField {
           promptText = "Email"
           styleClass += "email-field"
           text <==> email
         },
+        errorMsg(emailError),
         new TextField { promptText = "Name"; text <==> name },
+        errorMsg(nameError),
         new TextField { promptText = "Address"; text <==> address },
-        new TextField { promptText = "Age"; text <==> age }
+        errorMsg(addressError),
+        new TextField { promptText = "Age"; text <==> age },
+        errorMsg(ageError)
       )
       styleClass += "fields-pane"
     }
@@ -97,14 +120,35 @@ class Register {
         age.value,
         address.value
       )
+
       UserValidator.register(userData) match {
         case Invalid(errors) =>
+          clearErrors()
+          errors.toList.foreach {
+            case err @ Required(Username) => usernameError.value = err.message
+            case err @ Required(Password) => passwordError.value = err.message
+            case err @ Required(Email) => emailError.value = err.message
+            case err @ Required(Name) => nameError.value = err.message
+            case err @ NotANumber(_, _) => ageError.value = err.message
+            case err @ InvalidNumber(_, _) => ageError.value = err.message
+            case err @ Required(Address) => addressError.value = err.message
+          }
+          dialog.dialogPane().getScene.getWindow.sizeToScene()
           event.consume()
         case Valid(user) =>
           age.value = user.age.toString
           createdAt.value = user.createdAt.toEpochMilli
       }
     })
+  }
+
+  def clearErrors(): Unit = {
+    usernameError.value = ""
+    passwordError.value = ""
+    emailError.value = ""
+    nameError.value = ""
+    ageError.value = ""
+    addressError.value = ""
   }
 }
 
