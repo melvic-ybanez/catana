@@ -22,10 +22,18 @@ object LoginView {
         )
         styleClass += "fields-pane"
       }
-      bottom = new Button {
-        text = "Login"
-        maxWidth = Double.MaxValue
-        defaultButton = true
+      bottom = new VBox {
+        children ++= List(
+          new Button {
+            text = "Login"
+            maxWidth = Double.MaxValue
+            defaultButton = true
+          },
+          new Hyperlink {
+            id = "forgot-password"
+            text = "Forgot Password"
+          }
+        )
       }
     }
     bottom = new HBox {
