@@ -1,9 +1,9 @@
 package com.melvic.catana.view.users
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 import cats.data.Validated.{Invalid, Valid}
-import com.melvic.catana.entities.User
+import com.melvic.catana.entities.Users
 import com.melvic.catana.validators.UserValidator
 import javafx.event.ActionEvent
 import javafx.scene.control.Button
@@ -14,11 +14,11 @@ import scalafx.scene.control.{ButtonType, Dialog, Label, PasswordField, TextFiel
 import scalafx.scene.layout.VBox
 import scalafx.stage.{Stage, StageStyle}
 import cats.implicits._
-import com.melvic.catana.entities.User.{Address, Email, Name, Password, Username}
+import com.melvic.catana.entities.Users.{Address, Email, Name, Password, Username}
 import com.melvic.catana.validators.Error.{InvalidNumber, NotANumber, Required}
 
-class Register {
-  import Register._
+class RegisterView {
+  import RegisterView._
 
   val username = StringProperty("")
   val password = StringProperty("")
@@ -52,7 +52,7 @@ class Register {
       ButtonType.Cancel
     )
 
-    addResultConverter(dialog)
+    setResultConverter(dialog)
     addEventFilter(dialog)
 
     def errorMsg(prop: StringProperty) = new Label {
@@ -92,18 +92,17 @@ class Register {
     dialog
   }
 
-  private def addResultConverter(dialog: RegisterDialog): Unit =
+  private def setResultConverter(dialog: RegisterDialog): Unit =
     dialog.resultConverter = button =>
       if (button == registerButtonType) Some(
-        User(
-          "",
-          username.value,
-          password.value,
-          email.value,
-          name.value,
+        Users.default(
+          Username(username.value),
+          Password(password.value),
+          Email(email.value),
+          Name(name.value),
+          Address(address.value),
           age.value.toInt,
-          address.value,
-          Instant.ofEpochMilli(createdAt.value)
+          LocalDateTime.now(ZoneOffset.UTC),
         )
       ) else None
 
@@ -137,7 +136,7 @@ class Register {
           event.consume()
         case Valid(user) =>
           age.value = user.age.toString
-          createdAt.value = user.createdAt.toEpochMilli
+          createdAt.value = user.createdAt.toInstant(ZoneOffset.UTC).toEpochMilli
       }
     })
   }
@@ -152,8 +151,8 @@ class Register {
   }
 }
 
-object Register {
-  type RegisterDialog = Dialog[Option[User]]
+object RegisterView {
+  type RegisterDialog = Dialog[Option[Users]]
 
-  def apply(implicit stage: Stage) = new Register {}.apply
+  def apply(implicit stage: Stage) = new RegisterView {}.apply
 }

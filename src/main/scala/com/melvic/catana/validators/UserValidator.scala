@@ -1,9 +1,9 @@
 package com.melvic.catana.validators
 
-import java.time.Instant
+import java.time.{Instant, LocalDateTime, ZoneOffset}
 
-import com.melvic.catana.entities.User
-import com.melvic.catana.entities.User._
+import com.melvic.catana.entities.Users
+import com.melvic.catana.entities.Users._
 import common._
 import cats.implicits._
 import com.melvic.catana.validators.Error.InvalidNumber
@@ -11,7 +11,7 @@ import com.melvic.catana.validators.Error.InvalidNumber
 object UserValidator {
   type UserData = (String, String, String, String, String, String)
 
-  def register: UserData => ValidationResult[User] = {
+  def register: UserData => ValidationResult[Users] = {
     case (username, password, email, name, age, address) => (
       require(Username, username),
       require(Password, password),
@@ -20,7 +20,15 @@ object UserValidator {
       validateAge(age),
       require(Address, address)
     ).mapN { (_, _, _, _, age, _) =>
-      User("", username, password, email, name, age, address, Instant.now)
+      Users.default(
+        Username(username),
+        Password(password),
+        Email(email),
+        Name(name),
+        Address(address),
+        age,
+        LocalDateTime.now(ZoneOffset.UTC)
+      )
     }
   }
 
