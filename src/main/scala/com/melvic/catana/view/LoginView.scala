@@ -43,6 +43,7 @@ object LoginView {
                 else println("Unable to insert user")
               }
               /*_*/ dbCtx.performIO(result) /*_*/
+            case Some(_) => ()
             case None => println("Nothing to do here.")
           }
         }
