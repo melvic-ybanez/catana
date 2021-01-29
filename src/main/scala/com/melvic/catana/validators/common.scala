@@ -12,7 +12,12 @@ trait common {
   def numeric(field: Field, input: String): ValidationResult[Long] =
     if (isNumeric(input)) input.toLong.validNec else NotANumber(field, input).invalidNec
 
-  def isNumeric(input: String) = input.nonEmpty && input.forall(Character.isDigit)
+  def isUnsignedNumeric(input: String) = input.nonEmpty && input.forall(Character.isDigit)
+
+  def isNumeric(input: String) =
+    if (input.length > 1)
+      input.head == '-' && isUnsignedNumeric(input.tail) || isUnsignedNumeric(input)
+    else isUnsignedNumeric(input)
 }
 
 object common extends common

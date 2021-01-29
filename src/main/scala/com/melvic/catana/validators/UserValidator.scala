@@ -6,7 +6,7 @@ import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
 import common._
 import cats.implicits._
-import com.melvic.catana.validators.Error.InvalidNumber
+import com.melvic.catana.validators.Error.InvalidValue
 
 object UserValidator {
   type UserData = (String, String, String, String, String, String)
@@ -34,6 +34,6 @@ object UserValidator {
 
   def validateAge(input: String): ValidationResult[Int] =
     numeric(Age, input).andThen { age =>
-      if (age < 1) InvalidNumber(Age, age).invalidNec[Int] else age.toInt.validNec[Error]
+      if (age < 1) InvalidValue(Age, age).invalidNec[Int] else age.toInt.validNec[Error]
     }
 }

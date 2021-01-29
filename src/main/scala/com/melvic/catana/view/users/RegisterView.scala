@@ -15,7 +15,7 @@ import scalafx.scene.layout.VBox
 import scalafx.stage.{Stage, StageStyle}
 import cats.implicits._
 import com.melvic.catana.entities.Users.{Address, Email, Name, Password, Username}
-import com.melvic.catana.validators.Error.{InvalidNumber, NotANumber, Required}
+import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
 
 class RegisterView {
   import RegisterView._
@@ -129,7 +129,7 @@ class RegisterView {
             case err @ Required(Email) => emailError.value = err.message
             case err @ Required(Name) => nameError.value = err.message
             case err @ NotANumber(_, _) => ageError.value = err.message
-            case err @ InvalidNumber(_, _) => ageError.value = err.message
+            case err @ InvalidValue(_, _) => ageError.value = err.message
             case err @ Required(Address) => addressError.value = err.message
           }
           dialog.dialogPane().getScene.getWindow.sizeToScene()
