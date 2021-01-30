@@ -1,14 +1,14 @@
 package com.melvic.catana.validators
 
 import com.melvic.catana.entities.Field
+import com.melvic.catana.utils.Strings
 
 sealed trait Error {
   def field: Field
 
   def fieldString: String = field.toString
 
-  def lowerFieldString: String =
-    fieldString.head.toLower + fieldString.tail
+  def lowerFieldString: String = Strings.decapitalize(fieldString)
 }
 
 object Error {

@@ -5,7 +5,7 @@ import cats.kernel.Monoid
 import com.melvic.catana.entities.Field
 import com.melvic.catana.validators.Error.NotANumber
 
-trait common {
+trait Common {
   def require[M](field: Field, value: M)(implicit M: Monoid[M]): ValidationResult[M] =
     if (M.empty == value) Error.Required(field).invalidNec else value.validNec
 
@@ -20,4 +20,4 @@ trait common {
     else isUnsignedNumeric(input)
 }
 
-object common extends common
+object Common extends Common

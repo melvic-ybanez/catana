@@ -5,7 +5,7 @@ import java.time.{Instant, LocalDateTime, ZoneOffset}
 import cats.Contravariant
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
-import common._
+import Common._
 import cats.implicits._
 import com.melvic.catana.validators.Error.InvalidValue
 

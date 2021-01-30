@@ -16,6 +16,8 @@ import scalafx.stage.{Stage, StageStyle}
 import cats.implicits._
 import com.melvic.catana.entities.Users.{Address, Email, Name, Password, Username}
 import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
+import com.melvic.catana.passwords.{Password => PasswordUtils}
+import com.melvic.catana.utils.Strings
 
 class RegisterView {
   import RegisterView._
@@ -34,6 +36,8 @@ class RegisterView {
   val nameError = StringProperty("")
   val addressError = StringProperty("")
   val ageError = StringProperty("")
+
+  val passwordFeedback = StringProperty("")
 
   val registerButtonType = new ButtonType("Register", ButtonData.OKDone)
 
@@ -55,11 +59,23 @@ class RegisterView {
     setResultConverter(dialog)
     addEventFilter(dialog)
 
-    def errorMsg(prop: StringProperty) = new Label {
-      styleClass += "field-error-message"
-      text <==> prop
-      visible <== prop.isNotEmpty
-      managed <== visible
+    def errorMsg(feedbackProp: StringProperty, fieldProp: StringProperty) = {
+      fieldProp.onChange {
+        if (fieldProp.value.nonEmpty) {
+          feedbackProp.value = ""
+          repaint(dialog)
+        }
+      }
+      feedback(feedbackProp, "field-error-message")
+    }
+
+    def feedback(prop: StringProperty, className: String) = {
+      new Label {
+        styleClass += className
+        text <==> prop
+        visible <== prop.isNotEmpty
+        managed <== visible
+      }
     }
 
     clearErrors()
@@ -70,26 +86,37 @@ class RegisterView {
           promptText = "Username"
           text <==> username
         },
-        errorMsg(usernameError),
-        new PasswordField { promptText = "Password"; text <==> password },
-        errorMsg(passwordError),
+        errorMsg(usernameError, username),
+        passwordField,
+        errorMsg(passwordError, password),
+        feedback(passwordFeedback, "feedback-text"),
         new TextField {
           promptText = "Email"
           styleClass += "email-field"
           text <==> email
         },
-        errorMsg(emailError),
+        errorMsg(emailError, email),
         new TextField { promptText = "Name"; text <==> name },
-        errorMsg(nameError),
+        errorMsg(nameError, name),
         new TextField { promptText = "Address"; text <==> address },
-        errorMsg(addressError),
+        errorMsg(addressError, address),
         new TextField { promptText = "Age"; text <==> age },
-        errorMsg(ageError)
+        errorMsg(ageError, age)
       )
       styleClass += "fields-pane"
     }
 
     dialog
+  }
+
+  def passwordField = new PasswordField {
+    promptText = "Password"
+    text <==> password
+    onKeyReleased = { _ =>
+      val strength = PasswordUtils.strengthCategory(password.value)
+      val strengthLevel = Strings.displayText(strength.toString)
+      passwordFeedback.value = s"Strength: $strengthLevel"
+    }
   }
 
   private def setResultConverter(dialog: RegisterDialog): Unit =
@@ -132,7 +159,7 @@ class RegisterView {
             case err @ InvalidValue(_, _) => ageError.value = err.message
             case err @ Required(Address) => addressError.value = err.message
           }
-          dialog.dialogPane().getScene.getWindow.sizeToScene()
+          repaint(dialog)
           event.consume()
         case Valid(user) =>
           age.value = user.age.toString
@@ -149,6 +176,8 @@ class RegisterView {
     ageError.value = ""
     addressError.value = ""
   }
+
+  private def repaint(dialog: RegisterDialog): Unit = dialog.dialogPane().getScene.getWindow.sizeToScene()
 }
 
 object RegisterView {

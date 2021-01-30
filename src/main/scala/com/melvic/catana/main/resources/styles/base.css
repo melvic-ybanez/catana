@@ -26,6 +26,13 @@
 
 .dialog-pane .field-error-message {
     -fx-text-fill: #ffaaaa;
+}
+
+.dialog-pane .field-error-message, .feedback-text {
     -fx-font-size: 13pt;
     -fx-padding: 0 0 0 10;
+}
+
+.dialog-pane .feedback-text {
+    -fx-text-fill: #6495ED;
 }

@@ -3,7 +3,7 @@ package com.melvic.catana.view
 import com.melvic.catana.db.{DBContext, UsersDA}
 import com.melvic.catana.entities.Users
 import com.melvic.catana.main.Resources
-import com.melvic.catana.view.components._
+import com.melvic.catana.view.Components._
 import com.melvic.catana.view.users.RegisterView
 import scalafx.Includes._
 import scalafx.scene.control.{Button, Hyperlink, Label}
