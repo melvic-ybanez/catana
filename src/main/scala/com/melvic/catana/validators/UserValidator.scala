@@ -1,12 +1,12 @@
 package com.melvic.catana.validators
 
-import java.time.{Instant, LocalDateTime, ZoneOffset}
+import java.time.{LocalDateTime, ZoneOffset}
 
 import cats.Contravariant
+import cats.implicits._
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
-import Common._
-import cats.implicits._
+import com.melvic.catana.validators.Common._
 import com.melvic.catana.validators.Error.InvalidValue
 
 object UserValidator {

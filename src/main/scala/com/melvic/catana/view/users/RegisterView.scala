@@ -18,8 +18,7 @@ import scalafx.beans.property.{LongProperty, StringProperty}
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control._
 import scalafx.scene.layout.VBox
-import scalafx.stage.{Screen, Stage, StageStyle}
-import javafx.stage.{Stage => JStage}
+import scalafx.stage.{Stage, StageStyle}
 
 class RegisterView {
   import RegisterView._
