@@ -10,7 +10,7 @@
 out
 .bsp
 
-tests.sc
+*.sc
 
 application.conf
 

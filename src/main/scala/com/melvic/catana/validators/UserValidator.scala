@@ -2,6 +2,7 @@ package com.melvic.catana.validators
 
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 
+import cats.Contravariant
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
 import common._
@@ -10,8 +11,12 @@ import com.melvic.catana.validators.Error.InvalidValue
 
 object UserValidator {
   type UserData = (String, String, String, String, String, String)
+  type Validation = UserData => ValidationResult[Users]
 
-  def register: UserData => ValidationResult[Users] = {
+  def register: Validation = Contravariant[* => ValidationResult[Users]]
+    .contramap(registerRaw)(stripSpaces)
+
+  def registerRaw: Validation = {
     case (username, password, email, name, age, address) => (
       require(Username, username),
       require(Password, password),
@@ -36,4 +41,8 @@ object UserValidator {
     numeric(Age, input).andThen { age =>
       if (age < 1) InvalidValue(Age, age).invalidNec[Int] else age.toInt.validNec[Error]
     }
+
+  def stripSpaces: UserData => UserData = { case (username, password, email, name, age, address) =>
+    (username.trim, password, email.trim, name.trim, age.trim, address.trim)
+  }
 }
