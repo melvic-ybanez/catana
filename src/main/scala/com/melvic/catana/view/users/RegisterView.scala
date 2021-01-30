@@ -3,21 +3,23 @@ package com.melvic.catana.view.users
 import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 import cats.data.Validated.{Invalid, Valid}
+import cats.implicits._
 import com.melvic.catana.entities.Users
+import com.melvic.catana.entities.Users._
+import com.melvic.catana.passwords.{Password => PasswordUtils}
+import com.melvic.catana.utils.Strings
+import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
 import com.melvic.catana.validators.UserValidator
+import com.melvic.catana.view.Dialogs
 import javafx.event.ActionEvent
 import javafx.scene.control.Button
 import scalafx.Includes._
 import scalafx.beans.property.{LongProperty, StringProperty}
 import scalafx.scene.control.ButtonBar.ButtonData
-import scalafx.scene.control.{ButtonType, Dialog, Label, PasswordField, TextField}
+import scalafx.scene.control._
 import scalafx.scene.layout.VBox
-import scalafx.stage.{Stage, StageStyle}
-import cats.implicits._
-import com.melvic.catana.entities.Users.{Address, Email, Name, Password, Username}
-import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
-import com.melvic.catana.passwords.{Password => PasswordUtils}
-import com.melvic.catana.utils.Strings
+import scalafx.stage.{Screen, Stage, StageStyle}
+import javafx.stage.{Stage => JStage}
 
 class RegisterView {
   import RegisterView._
@@ -49,15 +51,16 @@ class RegisterView {
   }
 
   def apply(implicit stage: Stage) = {
-    val dialog = buildDialog
+    implicit val dialog: RegisterDialog = buildDialog
 
     dialog.dialogPane().buttonTypes = List(
       registerButtonType,
       ButtonType.Cancel
     )
 
-    setResultConverter(dialog)
-    addEventFilter(dialog)
+    setResultConverter
+    addEventFilter
+    clearErrors()
 
     def errorMsg(feedbackProp: StringProperty, fieldProp: StringProperty) = {
       fieldProp.onChange {
@@ -69,16 +72,12 @@ class RegisterView {
       feedback(feedbackProp, "field-error-message")
     }
 
-    def feedback(prop: StringProperty, className: String) = {
-      new Label {
-        styleClass += className
-        text <==> prop
-        visible <== prop.isNotEmpty
-        managed <== visible
-      }
+    def feedback(prop: StringProperty, className: String) = new Label {
+      styleClass += className
+      text <==> prop
+      visible <== prop.isNotEmpty
+      managed <== visible
     }
-
-    clearErrors()
 
     dialog.dialogPane().content = new VBox {
       children = List(
@@ -119,7 +118,7 @@ class RegisterView {
     }
   }
 
-  private def setResultConverter(dialog: RegisterDialog): Unit =
+  private def setResultConverter(implicit dialog: RegisterDialog): Unit =
     dialog.resultConverter = button =>
       if (button == registerButtonType) Some(
         Users.default(
@@ -133,7 +132,7 @@ class RegisterView {
         )
       ) else None
 
-  private def addEventFilter(dialog: RegisterDialog): Unit = {
+  private def addEventFilter(implicit dialog: RegisterDialog, stage: Stage): Unit = {
     val registerButton = dialog.getDialogPane
       .lookupButton(registerButtonType).asInstanceOf[Button]
 
@@ -159,7 +158,8 @@ class RegisterView {
             case err @ InvalidValue(_, _) => ageError.value = err.message
             case err @ Required(Address) => addressError.value = err.message
           }
-          repaint(dialog)
+          repaint
+          Dialogs.center
           event.consume()
         case Valid(user) =>
           age.value = user.age.toString
@@ -177,7 +177,8 @@ class RegisterView {
     addressError.value = ""
   }
 
-  private def repaint(dialog: RegisterDialog): Unit = dialog.dialogPane().getScene.getWindow.sizeToScene()
+  private def repaint(implicit dialog: RegisterDialog): Unit =
+    dialog.dialogPane().getScene.getWindow.sizeToScene()
 }
 
 object RegisterView {
