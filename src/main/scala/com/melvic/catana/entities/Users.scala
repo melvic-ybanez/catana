@@ -23,7 +23,7 @@ object Users {
       age: Int,
       createdAt: LocalDateTime
   ): Users = Users(
-    0,
+    1,
     username.value,
     password.value,
     email.value,

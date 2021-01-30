@@ -1,2 +1,2 @@
-# catana
+# Catana
 Personalized ranking sheets

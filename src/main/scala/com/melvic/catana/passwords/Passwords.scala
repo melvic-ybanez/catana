@@ -1,6 +1,8 @@
 package com.melvic.catana.passwords
 
-object Password {
+import java.security.MessageDigest
+
+object Passwords {
   import Criterion.{Number => CNumber, _}
 
   def strengthPoints(implicit password: String): Int = {
@@ -19,4 +21,12 @@ object Password {
     val count = password.count(p)
     if (count > 1) 2 else if (count > 0) 1 else 0
   }
+
+  def hash(password: String): Array[Byte] = {
+    val digest = MessageDigest.getInstance("SHA-256")
+    digest.update(password.getBytes("UTF-8"))
+    digest.digest()
+  }
+
+  def hashString(password: String): String = hash(password).mkString
 }

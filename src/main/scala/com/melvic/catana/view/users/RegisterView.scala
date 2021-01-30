@@ -6,7 +6,7 @@ import cats.data.Validated.{Invalid, Valid}
 import cats.implicits._
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
-import com.melvic.catana.passwords.{Password => PasswordUtils}
+import com.melvic.catana.passwords.Passwords
 import com.melvic.catana.utils.Strings
 import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
 import com.melvic.catana.validators.UserValidator
@@ -111,7 +111,7 @@ class RegisterView {
     promptText = "Password"
     text <==> password
     onKeyReleased = { _ =>
-      val strength = PasswordUtils.strengthCategory(password.value)
+      val strength = Passwords.strengthCategory(password.value)
       val strengthLevel = Strings.displayText(strength.toString)
       passwordFeedback.value = s"Strength: $strengthLevel"
     }
