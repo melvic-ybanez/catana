@@ -4,11 +4,12 @@ import java.time.{Instant, LocalDateTime, ZoneOffset}
 
 import cats.data.Validated.{Invalid, Valid}
 import cats.implicits._
+import com.melvic.catana.db.DBContext
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
 import com.melvic.catana.password._
 import com.melvic.catana.utils.Strings
-import com.melvic.catana.validators.Error.{InvalidFormat, InvalidValue, NotANumber, Required}
+import com.melvic.catana.validators.Error.{AlreadyExists, InvalidFormat, InvalidValue, NotANumber, Required}
 import com.melvic.catana.validators.UserValidator
 import com.melvic.catana.view.Dialogs
 import javafx.event.ActionEvent
@@ -49,7 +50,7 @@ class RegisterView {
     headerText = "Registration Form"
   }
 
-  def apply(implicit stage: Stage) = {
+  def apply(implicit stage: Stage, ctx: DBContext) = {
     implicit val dialog: RegisterDialog = buildDialog
 
     dialog.dialogPane().buttonTypes = List(
@@ -131,7 +132,7 @@ class RegisterView {
         )
       ) else None
 
-  private def addEventFilter(implicit dialog: RegisterDialog, stage: Stage): Unit = {
+  private def addEventFilter(implicit dialog: RegisterDialog, stage: Stage, ctx: DBContext): Unit = {
     val registerButton = dialog.getDialogPane
       .lookupButton(registerButtonType).asInstanceOf[Button]
 
@@ -145,13 +146,14 @@ class RegisterView {
         address.value
       )
 
-      UserValidator.register(userData) match {
+      UserValidator.register.apply(userData) match {
         case Invalid(errors) =>
           clearErrors()
           errors.toList.foreach {
             case err @ Required(Username) => usernameError.value = err.message
             case err @ Required(Password) => passwordError.value = err.message
             case err @ InvalidFormat(Email, _) => emailError.value = err.message
+            case err @ AlreadyExists(Email) => emailError.value = err.message
             case err @ Required(Name) => nameError.value = err.message
             case err @ NotANumber(_, _) => ageError.value = err.message
             case err @ InvalidValue(_, _) => ageError.value = err.message
@@ -183,5 +185,5 @@ class RegisterView {
 object RegisterView {
   type RegisterDialog = Dialog[Option[Users]]
 
-  def apply(implicit stage: Stage) = new RegisterView {}.apply
+  def apply(implicit stage: Stage, ctx: DBContext) = new RegisterView {}.apply
 }

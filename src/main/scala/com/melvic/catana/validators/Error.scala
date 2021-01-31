@@ -6,7 +6,7 @@ import com.melvic.catana.utils.Strings
 sealed trait Error {
   def field: Field
 
-  def fieldString: String = field.toString
+  def fieldString: String = Strings.displayText(field.toString)
 
   def lowerFieldString: String = Strings.decapitalize(fieldString)
 }
@@ -26,5 +26,9 @@ object Error {
 
   final case class InvalidFormat(field: Field, value: String) extends Error {
     def message = s"Invalid $lowerFieldString format: $value"
+  }
+
+  final case class AlreadyExists(field: Field) extends Error {
+    def message = s"$fieldString already exists"
   }
 }
