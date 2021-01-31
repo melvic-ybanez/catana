@@ -10,7 +10,8 @@ libraryDependencies ++= Seq(
   "org.typelevel" %% "cats-core" % "2.1.1",
   "org.postgresql" % "postgresql" % "42.2.8",
   "io.getquill" %% "quill-jdbc" % "3.6.0",
-  "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime
+  "ch.qos.logback" % "logback-classic" % "1.1.3" % Runtime,
+  "commons-validator" % "commons-validator" % "1.7"
 )
 
 addCompilerPlugin("org.typelevel" %% "kind-projector" % "0.11.3" cross CrossVersion.full)

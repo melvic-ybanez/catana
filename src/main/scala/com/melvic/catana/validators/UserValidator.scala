@@ -6,8 +6,8 @@ import cats.Contravariant
 import cats.implicits._
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
-import com.melvic.catana.validators.Common._
-import com.melvic.catana.validators.Error.InvalidValue
+import com.melvic.catana.validators.Error.{InvalidFormat, InvalidValue}
+import com.melvic.catana.{email => E}
 
 object UserValidator {
   type UserData = (String, String, String, String, String, String)
@@ -20,7 +20,7 @@ object UserValidator {
     case (username, password, email, name, age, address) => (
       require(Username, username),
       require(Password, password),
-      require(Email, email),
+      validateEmail(email),
       require(Name, name),
       validateAge(age),
       require(Address, address)
@@ -41,6 +41,9 @@ object UserValidator {
     numeric(Age, input).andThen { age =>
       if (age < 1) InvalidValue(Age, age).invalidNec[Int] else age.toInt.validNec[Error]
     }
+
+  def validateEmail(rawEmail: String): ValidationResult[String] =
+    if (E.isValid(rawEmail)) rawEmail.validNec else InvalidFormat(Email, rawEmail).invalidNec
 
   def stripSpaces: UserData => UserData = { case (username, password, email, name, age, address) =>
     (username.trim, password, email.trim, name.trim, age.trim, address.trim)

@@ -6,9 +6,9 @@ import cats.data.Validated.{Invalid, Valid}
 import cats.implicits._
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
-import com.melvic.catana.passwords.Passwords
+import com.melvic.catana.password._
 import com.melvic.catana.utils.Strings
-import com.melvic.catana.validators.Error.{InvalidValue, NotANumber, Required}
+import com.melvic.catana.validators.Error.{InvalidFormat, InvalidValue, NotANumber, Required}
 import com.melvic.catana.validators.UserValidator
 import com.melvic.catana.view.Dialogs
 import javafx.event.ActionEvent
@@ -111,7 +111,7 @@ class RegisterView {
     promptText = "Password"
     text <==> password
     onKeyReleased = { _ =>
-      val strength = Passwords.strengthCategory(password.value)
+      val strength = strengthCategory(password.value)
       val strengthLevel = Strings.displayText(strength.toString)
       passwordFeedback.value = s"Strength: $strengthLevel"
     }
@@ -151,7 +151,7 @@ class RegisterView {
           errors.toList.foreach {
             case err @ Required(Username) => usernameError.value = err.message
             case err @ Required(Password) => passwordError.value = err.message
-            case err @ Required(Email) => emailError.value = err.message
+            case err @ InvalidFormat(Email, _) => emailError.value = err.message
             case err @ Required(Name) => nameError.value = err.message
             case err @ NotANumber(_, _) => ageError.value = err.message
             case err @ InvalidValue(_, _) => ageError.value = err.message

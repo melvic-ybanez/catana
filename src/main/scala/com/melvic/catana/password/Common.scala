@@ -1,8 +1,8 @@
-package com.melvic.catana.passwords
+package com.melvic.catana.password
 
 import java.security.MessageDigest
 
-object Passwords {
+trait Common {
   import Criterion.{Number => CNumber, _}
 
   def strengthPoints(implicit password: String): Int = {
@@ -22,6 +22,7 @@ object Passwords {
     if (count > 1) 2 else if (count > 0) 1 else 0
   }
 
+  // TODO: Use a more secure hashing algorithm with a salt
   def hash(password: String): Array[Byte] = {
     val digest = MessageDigest.getInstance("SHA-256")
     digest.update(password.getBytes("UTF-8"))
@@ -30,3 +31,5 @@ object Passwords {
 
   def hashString(password: String): String = hash(password).mkString
 }
+
+object Common extends Common

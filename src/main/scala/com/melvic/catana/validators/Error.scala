@@ -20,7 +20,11 @@ object Error {
     def message = s"Not a number: $value"
   }
 
-  final case class InvalidValue(field: Field, value: Long) extends Error {
+  final case class InvalidValue[A](field: Field, value: A) extends Error {
     def message = s"Invalid $lowerFieldString: $value"
+  }
+
+  final case class InvalidFormat(field: Field, value: String) extends Error {
+    def message = s"Invalid $lowerFieldString format: $value"
   }
 }

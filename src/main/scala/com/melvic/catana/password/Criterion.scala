@@ -1,4 +1,4 @@
-package com.melvic.catana.passwords
+package com.melvic.catana.password
 
 sealed trait Criterion
 
