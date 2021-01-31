@@ -9,6 +9,7 @@ import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
 import com.melvic.catana.password._
 import com.melvic.catana.utils.Strings
+import com.melvic.catana.validators
 import com.melvic.catana.validators.Error.{AlreadyExists, InvalidFormat, InvalidValue, NotANumber, Required}
 import com.melvic.catana.validators.UserValidator
 import com.melvic.catana.view.Dialogs
@@ -149,14 +150,16 @@ class RegisterView {
       UserValidator.register.apply(userData) match {
         case Invalid(errors) =>
           clearErrors()
+
+          def error(prop: StringProperty, error: validators.Error): Unit =
+            prop.value = error.message
+
           errors.toList.foreach {
-            case err @ Required(Username) => usernameError.value = err.message
-            case err @ Required(Password) => passwordError.value = err.message
-            case err @ InvalidFormat(Email, _) => emailError.value = err.message
-            case err @ AlreadyExists(Email) => emailError.value = err.message
-            case err @ Required(Name) => nameError.value = err.message
-            case err @ NotANumber(_, _) => ageError.value = err.message
-            case err @ InvalidValue(_, _) => ageError.value = err.message
+            case err @ (Required(Username) | AlreadyExists(Username)) => error(usernameError, err)
+            case err @ Required(Password) => error(passwordError, err)
+            case err @ (InvalidFormat(Email, _) | AlreadyExists(Email)) => error(emailError, err)
+            case err @ Required(Name) => error(nameError, err)
+            case err @ (NotANumber(_, _) | InvalidValue(_, _)) => error(ageError, err)
             case err @ Required(Address) => addressError.value = err.message
           }
           repaint

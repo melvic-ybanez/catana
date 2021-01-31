@@ -2,6 +2,7 @@ package com.melvic.catana.db
 
 import com.melvic.catana.entities.Users
 import com.melvic.catana.password._
+import io.getquill.{EntityQuery, Query}
 
 object UsersDA {
   def addUser(user: Users)(implicit ctx: DBContext) = {
@@ -16,14 +17,28 @@ object UsersDA {
     ctx.runIO(quoted)
   }
 
-  def fromEmail(email: String)(implicit ctx: DBContext) = {
+  def byEmail(email: String)(implicit ctx: DBContext) = {
     import ctx._
 
-    val quoted = quote {
+    quote {
       query[Users].filter(_.email == lift(email))
     }
+  }
 
-    ctx.runIO(quoted)
+  def byUsername(username: String)(implicit ctx: DBContext) = {
+    import ctx._
+
+    quote {
+      query[Users].filter(_.username == lift(username))
+    }
+  }
+
+  def unique(ctx: DBContext)(quoted: ctx.Quoted[EntityQuery[Users]]) = {
+    import ctx._
+
+    val result = ctx.runIO(quoted)
+    val notExists = result.map(_.isEmpty)
+    ctx.performIO(notExists)
   }
 }
 

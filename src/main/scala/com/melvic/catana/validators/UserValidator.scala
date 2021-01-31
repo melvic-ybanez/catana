@@ -19,7 +19,7 @@ object UserValidator {
 
   def registerRaw(implicit ctx: DBContext): Validation = {
     case (username, password, email, name, age, address) => (
-      require(Username, username),
+      validateUsername(username),
       require(Password, password),
       validateEmail(email),
       require(Name, name),
@@ -46,13 +46,19 @@ object UserValidator {
   def validateEmail(rawEmail: String)(implicit ctx: DBContext): ValidationResult[String] =
     if (E.isValid(rawEmail)) {
       val validEmail = rawEmail.validNec
-      validEmail.andThen { email =>
-        val result = UsersDA.fromEmail(email)
-        val unique = result.map(_.isEmpty)
-        val ioResult = /*_*/ ctx.performIO(unique) /*_*/
-        if (ioResult) validEmail else AlreadyExists(Email).invalidNec
+      validEmail.andThen { email =>  /*_*/
+        val unique = UsersDA.unique(ctx)(UsersDA.byEmail(email))
+        if (unique) validEmail else AlreadyExists(Email).invalidNec    /*_*/
       }
     } else InvalidFormat(Email, rawEmail).invalidNec
+
+  def validateUsername(rawUsername: String)(implicit ctx: DBContext): ValidationResult[String] = {
+    val required = require(Username, rawUsername)
+    required.andThen { username =>    /*_*/
+      val unique = UsersDA.unique(ctx)(UsersDA.byUsername(username))
+      if (unique) required else AlreadyExists(Username).invalidNec    /*_*/
+    }
+  }
 
   def stripSpaces: UserData => UserData = { case (username, password, email, name, age, address) =>
     (username.trim, password, email.trim, name.trim, age.trim, address.trim)

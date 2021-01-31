@@ -9,6 +9,8 @@ sealed trait Error {
   def fieldString: String = Strings.displayText(field.toString)
 
   def lowerFieldString: String = Strings.decapitalize(fieldString)
+
+  def message: String
 }
 
 object Error {
