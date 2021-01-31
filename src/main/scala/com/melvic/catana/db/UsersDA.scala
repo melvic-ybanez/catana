@@ -10,7 +10,7 @@ object UsersDA {
     val securedUser = user.copy(password = Common.hashString(user.password))
 
     val quoted = quote {
-      query[Users].insert(lift(securedUser))
+      query[Users].insert(lift(securedUser)).returningGenerated(_.id)
     }
     ctx.runIO(quoted)
   }
