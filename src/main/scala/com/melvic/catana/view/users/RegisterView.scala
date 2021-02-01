@@ -11,14 +11,13 @@ import com.melvic.catana.main.Resources
 import com.melvic.catana.password._
 import com.melvic.catana.utils.Strings
 import com.melvic.catana.validators
-import com.melvic.catana.validators.Error.{AlreadyExists, InvalidFormat, InvalidValue, NotANumber, Required}
+import com.melvic.catana.validators.Error._
 import com.melvic.catana.validators.UserValidator
 import com.melvic.catana.view.Dialogs
 import javafx.event.ActionEvent
 import javafx.scene.control.Button
 import scalafx.Includes._
 import scalafx.beans.property.{IntegerProperty, LongProperty, StringProperty}
-import scalafx.geometry.Insets
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control._
 import scalafx.scene.layout.{HBox, VBox}
@@ -74,13 +73,15 @@ class RegisterView {
       feedback(feedbackProp, "field-error-message")
     }
 
-    def feedback(prop: StringProperty, className: String) = new Label {
-      styleClass += className
-      text <==> prop
-      visible <== prop.isNotEmpty
-      managed <== visible
-
+    def feedback(prop: StringProperty, className: String) = {
       prop.onChange(repaint(dialog))
+
+      new Label {
+        styleClass += className
+        text <==> prop
+        visible <== prop.isNotEmpty
+        managed <== visible
+      }
     }
 
     dialog.dialogPane().content = new VBox {
