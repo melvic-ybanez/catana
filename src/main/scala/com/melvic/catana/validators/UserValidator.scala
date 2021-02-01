@@ -47,7 +47,7 @@ object UserValidator {
     if (E.isValid(rawEmail)) {
       val validEmail = rawEmail.validNec
       validEmail.andThen { email =>  /*_*/
-        val unique = UsersDA.unique(ctx)(UsersDA.byEmail(email))
+        val unique = UsersDA.empty(ctx)(UsersDA.byEmail(email))
         if (unique) validEmail else AlreadyExists(Email).invalidNec    /*_*/
       }
     } else InvalidFormat(Email, rawEmail).invalidNec
@@ -55,7 +55,7 @@ object UserValidator {
   def validateUsername(rawUsername: String)(implicit ctx: DBContext): ValidationResult[String] = {
     val required = require(Username, rawUsername)
     required.andThen { username =>    /*_*/
-      val unique = UsersDA.unique(ctx)(UsersDA.byUsername(username))
+      val unique = UsersDA.empty(ctx)(UsersDA.byUsername(username))
       if (unique) required else AlreadyExists(Username).invalidNec    /*_*/
     }
   }

@@ -1,0 +1,17 @@
+.dialog-pane .feedback-warning {
+    -fx-text-fill: #f0ad4e;
+}
+
+.dialog-pane .feedback-normal {
+    -fx-text-fill: #5bc0de
+}
+
+.dialog-pane .feedback-good {
+    -fx-text-fill: #5cb85c
+}
+
+.dialog-pane .feedback-warning,
+.dialog-pane .feedback-normal,
+.dialog-pane .feedback-good {
+    -fx-font-size: 13pt;
+}

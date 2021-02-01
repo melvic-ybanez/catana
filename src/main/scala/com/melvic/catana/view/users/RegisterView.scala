@@ -7,6 +7,7 @@ import cats.implicits._
 import com.melvic.catana.db.DBContext
 import com.melvic.catana.entities.Users
 import com.melvic.catana.entities.Users._
+import com.melvic.catana.main.Resources
 import com.melvic.catana.password._
 import com.melvic.catana.utils.Strings
 import com.melvic.catana.validators
@@ -16,10 +17,11 @@ import com.melvic.catana.view.Dialogs
 import javafx.event.ActionEvent
 import javafx.scene.control.Button
 import scalafx.Includes._
-import scalafx.beans.property.{LongProperty, StringProperty}
+import scalafx.beans.property.{IntegerProperty, LongProperty, StringProperty}
+import scalafx.geometry.Insets
 import scalafx.scene.control.ButtonBar.ButtonData
 import scalafx.scene.control._
-import scalafx.scene.layout.VBox
+import scalafx.scene.layout.{HBox, VBox}
 import scalafx.stage.{Stage, StageStyle}
 
 class RegisterView {
@@ -41,6 +43,7 @@ class RegisterView {
   val ageError = StringProperty("")
 
   val passwordFeedback = StringProperty("")
+  val passwordPoints = IntegerProperty(0)
 
   val registerButtonType = new ButtonType("Register", ButtonData.OKDone)
 
@@ -49,6 +52,7 @@ class RegisterView {
     initStyle(StageStyle.Undecorated)
     title = "Registration Form"
     headerText = "Registration Form"
+    dialogPane().stylesheets += Resources.style("register")
   }
 
   def apply(implicit stage: Stage, ctx: DBContext) = {
@@ -65,10 +69,7 @@ class RegisterView {
 
     def errorMsg(feedbackProp: StringProperty, fieldProp: StringProperty) = {
       fieldProp.onChange {
-        if (fieldProp.value.nonEmpty) {
-          feedbackProp.value = ""
-          repaint(dialog)
-        }
+        if (fieldProp.value.nonEmpty) feedbackProp.value = ""
       }
       feedback(feedbackProp, "field-error-message")
     }
@@ -78,6 +79,8 @@ class RegisterView {
       text <==> prop
       visible <== prop.isNotEmpty
       managed <== visible
+
+      prop.onChange(repaint(dialog))
     }
 
     dialog.dialogPane().content = new VBox {
@@ -89,7 +92,7 @@ class RegisterView {
         errorMsg(usernameError, username),
         passwordField,
         errorMsg(passwordError, password),
-        feedback(passwordFeedback, "feedback-text"),
+        passwordFeedback(feedback(passwordFeedback, "feedback-warning")),
         new TextField {
           promptText = "Email"
           styleClass += "email-field"
@@ -113,9 +116,31 @@ class RegisterView {
     promptText = "Password"
     text <==> password
     onKeyReleased = { _ =>
-      val strength = strengthCategory(password.value)
-      val strengthLevel = Strings.displayText(strength.toString)
-      passwordFeedback.value = s"Strength: $strengthLevel"
+      val points = strengthPoints(password.value)
+      val strength = Strength.category(points)
+      passwordFeedback.value = Strings.displayText(strength.toString)
+      passwordPoints.value = points
+    }
+  }
+
+  def passwordFeedback(label: Label): HBox = {
+    passwordPoints.onChange {
+      val points = passwordPoints.value
+      label.styleClass = label.styleClass.filter(!_.startsWith("feedback")) :+ {
+        if (points < 5) "feedback-warning"
+        else if (points < 7) "feedback-normal"
+        else "feedback-good"
+      }
+    }
+
+    new HBox {
+      visible <== passwordFeedback.isNotEmpty
+      managed <== passwordFeedback.isNotEmpty
+      children ++= List(
+        new Label { text = "Password strength:"; styleClass += "feedback-text"; },
+        label
+      )
+      spacing = 5
     }
   }
 

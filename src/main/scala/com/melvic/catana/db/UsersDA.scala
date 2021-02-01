@@ -33,9 +33,9 @@ object UsersDA {
     }
   }
 
-  def unique(ctx: DBContext)(quoted: ctx.Quoted[EntityQuery[Users]]) = {
+  def empty(ctx: DBContext)(quoted: ctx.Quoted[EntityQuery[Users]]) = {
     import ctx._
-
+    
     val result = ctx.runIO(quoted)
     val notExists = result.map(_.isEmpty)
     ctx.performIO(notExists)
